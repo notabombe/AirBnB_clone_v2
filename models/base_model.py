@@ -1,83 +1,76 @@
 #!/usr/bin/python3
-"""This is the base model class for AirBnB"""
-from sqlalchemy.ext.declarative import declarative_base
-import uuid
+"""
+BaseModel Class of Models Module
+"""
+
+import json
 import models
+from uuid import uuid4, UUID
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, DateTime
 
-
-Base = declarative_base()
+now = datetime.now
+strptime = datetime.strptime
 
 
 class BaseModel:
-    """This class will defines all common attributes/methods
-    for other classes
-    """
-    id = Column(String(60), unique=True, nullable=False, primary_key=True)
-    created_at = Column(DateTime, nullable=False, default=(datetime.utcnow()))
-    updated_at = Column(DateTime, nullable=False, default=(datetime.utcnow()))
+    """attributes and functions for BaseModel class"""
 
     def __init__(self, *args, **kwargs):
-        """Instantiation of base model class
-        Args:
-            args: it won't be used
-            kwargs: arguments for the constructor of the BaseModel
-        Attributes:
-            id: unique id generated
-            created_at: creation date
-            updated_at: updated date
-        """
+        """instantiation of new BaseModel Class"""
         if kwargs:
-            for key, value in kwargs.items():
-                if key == "created_at" or key == "updated_at":
-                    value = datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%f")
-                if key != "__class__":
-                    setattr(self, key, value)
-            if "id" not in kwargs:
-                self.id = str(uuid.uuid4())
-            if "created_at" not in kwargs:
-                self.created_at = datetime.now()
-            if "updated_at" not in kwargs:
-                self.updated_at = datetime.now()
+            self.__set_attributes(kwargs)
         else:
-            self.id = str(uuid.uuid4())
-            self.created_at = self.updated_at = datetime.now()
+            self.id = str(uuid4())
+            self.created_at = now()
+            models.storage.new(self)
 
-    def __str__(self):
-        """returns a string
-        Return:
-            returns a string of class name, id, and dictionary
-        """
-        return "[{}] ({}) {}".format(
-            type(self).__name__, self.id, self.__dict__)
+    def __set_attributes(self, d):
+        """converts kwargs values to python class attributes"""
+        if 'id' not in d:
+            d['id'] = str(uuid4())
+        if 'created_at' not in d:
+            d['created_at'] = now()
+        elif not isinstance(d['created_at'], datetime):
+            d['created_at'] = strptime(d['created_at'], "%Y-%m-%d %H:%M:%S.%f")
+        if 'updated_at' in d:
+            if not isinstance(d['updated_at'], datetime):
+                d['updated_at'] = strptime(d['updated_at'],
+                                           "%Y-%m-%d %H:%M:%S.%f")
+        if '__class__' in d:
+            d.pop('__class__')
+        self.__dict__ = d
+        models.storage.new(self)
 
-    def __repr__(self):
-        """return a string representaion
-        """
-        return self.__str__()
+    def __is_serializable(self, obj_v):
+        """checks if object is serializable"""
+        try:
+            nada = json.dumps(obj_v)
+            return True
+        except:
+            return False
+
+    def bm_update(self, name, value):
+        """updates instance with name and value"""
+        setattr(self, name, value)
+        self.save()
 
     def save(self):
-        """updates the public instance attribute updated_at to current
-        """
-        self.updated_at = datetime.now()
-        models.storage.new(self)
+        """updates attribute updated_at to current time"""
+        self.updated_at = now()
         models.storage.save()
 
-    def to_dict(self):
-        """creates dictionary of the class  and returns
-        Return:
-            returns a dictionary of all the key values in __dict__
-        """
-        my_dict = dict(self.__dict__)
-        my_dict["__class__"] = str(type(self).__name__)
-        my_dict["created_at"] = self.created_at.isoformat()
-        my_dict["updated_at"] = self.updated_at.isoformat()
-        if '_sa_instance_state' in my_dict.keys():
-            del my_dict['_sa_instance_state']
-        return my_dict
+    def to_json(self):
+        """returns json representation of self"""
+        bm_dict = {}
+        for k, v in (self.__dict__).items():
+            if (self.__is_serializable(v)):
+                bm_dict[k] = v
+            else:
+                bm_dict[k] = str(v)
+        bm_dict["__class__"] = type(self).__name__
+        return(bm_dict)
 
-    def delete(self):
-        """ delete object
-        """
-        models.storage.delete(self)
+    def __str__(self):
+        """returns string type representation of object instance"""
+        cname = type(self).__name__
+        return "[{}] ({}) {}".format(cname, self.id, self.__dict__)
