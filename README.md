@@ -104,10 +104,7 @@ github repo
 
 ## Authors
 
-* MJ Johnson, [@mj31508](https://github.com/mj31508)
-* David John Coleman II, [davidjohncoleman.com](http://www.davidjohncoleman.com/)
-* Jared Heck, [@jarehec](https://github.com/jarehec)
-* Spencer Cheng [@spencerhcheng](https://github.com/spencerhcheng)
+* Hillary [@notabombe](https://github.com/notabombe)
 
 ## License
 
