@@ -61,16 +61,14 @@ class BaseModel:
 
     def to_json(self):
         """returns json representation of self"""
-        bm_dict = {}
-        for k, v in (self.__dict__).items():
-            if (self.__is_serializable(v)):
-                bm_dict[k] = v
-            else:
-                bm_dict[k] = str(v)
+        bm_dict = {
+            k: v if (self.__is_serializable(v)) else str(v)
+            for k, v in (self.__dict__).items()
+        }
         bm_dict["__class__"] = type(self).__name__
         return(bm_dict)
 
     def __str__(self):
         """returns string type representation of object instance"""
         cname = type(self).__name__
-        return "[{}] ({}) {}".format(cname, self.id, self.__dict__)
+        return f"[{cname}] ({self.id}) {self.__dict__}"

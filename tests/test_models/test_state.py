@@ -62,11 +62,8 @@ class TestStateInstances(unittest.TestCase):
         """... checks if BaseModel is properly casted to string"""
         my_str = str(self.state)
         my_list = ['State', 'id', 'created_at']
-        actual = 0
-        for sub_str in my_list:
-            if sub_str in my_str:
-                actual += 1
-        self.assertTrue(3 == actual)
+        actual = sum(1 for sub_str in my_list if sub_str in my_str)
+        self.assertTrue(actual == 3)
 
     def test_instantiation_no_updated(self):
         """... should not have updated attribute"""
@@ -74,7 +71,7 @@ class TestStateInstances(unittest.TestCase):
         actual = 0
         if 'updated_at' in my_str:
             actual += 1
-        self.assertTrue(0 == actual)
+        self.assertTrue(actual == 0)
 
     def test_updated_at(self):
         """... save function should add updated_at attribute"""
@@ -91,14 +88,12 @@ class TestStateInstances(unittest.TestCase):
             serialized = json.dumps(self.state_json)
         except:
             actual = 0
-        self.assertTrue(1 == actual)
+        self.assertTrue(actual == 1)
 
     def test_json_class(self):
         """... to_json should include class key with value State"""
         self.state_json = self.state.to_json()
-        actual = None
-        if self.state_json['__class__']:
-            actual = self.state_json['__class__']
+        actual = self.state_json['__class__'] if self.state_json['__class__'] else None
         expected = 'State'
         self.assertEqual(expected, actual)
 

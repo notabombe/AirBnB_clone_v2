@@ -62,11 +62,8 @@ class TestAmenityInstances(unittest.TestCase):
         """... checks if BaseModel is properly casted to string"""
         my_str = str(self.amenity)
         my_list = ['Amenity', 'id', 'created_at']
-        actual = 0
-        for sub_str in my_list:
-            if sub_str in my_str:
-                actual += 1
-        self.assertTrue(3 == actual)
+        actual = sum(1 for sub_str in my_list if sub_str in my_str)
+        self.assertTrue(actual == 3)
 
     def test_instantiation_no_updated(self):
         """... should not have updated attribute"""
@@ -74,7 +71,7 @@ class TestAmenityInstances(unittest.TestCase):
         actual = 0
         if 'updated_at' in my_str:
             actual += 1
-        self.assertTrue(0 == actual)
+        self.assertTrue(actual == 0)
 
     def test_updated_at(self):
         """... save function should add updated_at attribute"""
@@ -91,7 +88,7 @@ class TestAmenityInstances(unittest.TestCase):
             serialized = json.dumps(self.amenity_json)
         except:
             actual = 0
-        self.assertTrue(1 == actual)
+        self.assertTrue(actual == 1)
 
     def test_json_class(self):
         """... to_json should include class key with value Amenity"""
@@ -105,10 +102,7 @@ class TestAmenityInstances(unittest.TestCase):
     def test_email_attribute(self):
         """... add email attribute"""
         self.amenity.name = "greatWifi"
-        if hasattr(self.amenity, 'name'):
-            actual = self.amenity.name
-        else:
-            actual = ''
+        actual = self.amenity.name if hasattr(self.amenity, 'name') else ''
         expected = "greatWifi"
         self.assertEqual(expected, actual)
 

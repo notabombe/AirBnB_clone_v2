@@ -18,19 +18,19 @@ def hbnb():
 
 @app.route('/c/<text>', strict_slashes=False)
 def c_isfun(text):
-    return "C {}".format(text.replace("_", " "))
+    return f'C {text.replace("_", " ")}'
 
 
 @app.route('/python', strict_slashes=False)
 @app.route('/python/<text>', strict_slashes=False)
 def python_cool(text="is cool"):
-    return "Python {}".format(text.replace("_", " "))
+    return f'Python {text.replace("_", " ")}'
 
 
 @app.route('/number/<int:n>', strict_slashes=False)
 def number_route(n):
     if type(n) is int:
-        return "{} is a number".format(n)
+        return f"{n} is a number"
 
 
 @app.route('/number_template/<int:n>', strict_slashes=False)
@@ -42,10 +42,7 @@ def number_template(n):
 @app.route('/number_odd_or_even/<int:n>', strict_slashes=False)
 def number_odd_or_even(n):
     if type(n) is int:
-        if n % 2 == 0:
-            m = "even"
-        else:
-            m = "odd"
+        m = "even" if n % 2 == 0 else "odd"
         return render_template('6-number_odd_or_even.html', n=n, m=m)
 
 

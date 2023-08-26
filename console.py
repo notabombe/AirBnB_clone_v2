@@ -50,10 +50,9 @@ class HBNBCommand(cmd.Cmd):
         if len(arg) == 0:
             print(HBNBCommand.ERR[0])
             error = 1
-        else:
-            if arg[0] not in CNC:
-                print(HBNBCommand.ERR[1])
-                error = 1
+        elif arg[0] not in CNC:
+            print(HBNBCommand.ERR[1])
+            error = 1
         return error
 
     def __id_err(self, arg):
@@ -104,10 +103,10 @@ class HBNBCommand(cmd.Cmd):
         EXAMPLE: create City
                  City.create()
         """
-        arg_dict = {}
         arg = arg.split()
         error = self.__class_err(arg)
         if not error:
+            arg_dict = {}
             for k, v in CNC.items():
                 if k == arg[0]:
                     my_obj = v()
@@ -145,12 +144,12 @@ class HBNBCommand(cmd.Cmd):
         displays all City objects linked to the current State
         all_cities [State]
         """
-        print("arg: {}".format(arg))
-        print("FS_all: {}".format(storage.all()))
+        print(f"arg: {arg}")
+        print(f"FS_all: {storage.all()}")
         print("\n\n\n")
         for k, v in storage.all().items():
-            print("KEY: {}".format(k))
-            print("VALUES: {}".format(v))
+            print(f"KEY: {k}")
+            print(f"VALUES: {v}")
         
         	
 
@@ -180,25 +179,22 @@ class HBNBCommand(cmd.Cmd):
                  City.all()
         """
         arg = arg.split()
-        error = 0
-        if arg:
-            error = self.__class_err(arg)
+        error = self.__class_err(arg) if arg else 0
         if not error:
             print('[', end='')
             fs_o = FS.all()
             l = 0
+            c = 0
             if arg:
                 for v in fs_o.values():
                     if type(v).__name__ == CNC[arg[0]].__name__:
                         l += 1
-                c = 0
                 for v in fs_o.values():
                     if type(v).__name__ == CNC[arg[0]].__name__:
                         c += 1
                         print(v, end=(', ' if c < l else ''))
             else:
                 l = len(fs_o)
-                c = 0
                 for v in fs_o.values():
                     print(v, end=(', ' if c < l else ''))
             print(']')
@@ -230,18 +226,17 @@ class HBNBCommand(cmd.Cmd):
 
     def __check_dict(self, arg):
         """checks if the arguments input has a dictionary"""
-        if '{' and '}' in arg:
-            l = arg.split('{')[1]
-            l = l.split(', ')
-            l = list(s.split(':') for s in l)
-            d = {}
-            for subl in l:
-                k = subl[0].strip('"\' {}')
-                v = subl[1].strip('"\' {}')
-                d[k] = v
-            return d
-        else:
+        if '}' not in arg:
             return None
+        l = arg.split('{')[1]
+        l = l.split(', ')
+        l = [s.split(':') for s in l]
+        d = {}
+        for subl in l:
+            k = subl[0].strip('"\' {}')
+            v = subl[1].strip('"\' {}')
+            d[k] = v
+        return d
 
     def __handle_update_err(self, arg):
         """checks for all errors in update"""
@@ -331,29 +326,26 @@ class HBNBCommand(cmd.Cmd):
         """counts the number objects in File Storage"""
         args = arg.split()
         fs_o = FS.all()
-        count = 0
-        for k in fs_o.keys():
-            if args[0] in k:
-                count += 1
+        count = sum(1 for k in fs_o.keys() if args[0] in k)
         print(count)
 
     def __parse_exec(self, c, arg):
         """parses the input from .function() syntax, calls appropriate function
         """
-        CMD_MATCH = {
-            '.all': self.do_all,
-            '.count': self.__count,
-            '.show': self.do_show,
-            '.destroy': self.do_destroy,
-            '.update': self.do_update,
-            '.create': self.do_create,
-        }
-        if '(' and ')' in arg:
+        if ')' in arg:
             check = arg.split('(')
-            new_arg = "{} {}".format(c, check[1][:-1])
+            new_arg = f"{c} {check[1][:-1]}"
+            CMD_MATCH = {
+                '.all': self.do_all,
+                '.count': self.__count,
+                '.show': self.do_show,
+                '.destroy': self.do_destroy,
+                '.update': self.do_update,
+                '.create': self.do_create,
+            }
             for k, v in CMD_MATCH.items():
                 if k == check[0]:
-                    if ((',' or '"' in new_arg) and k != '.update'):
+                    if k != '.update':
                         new_arg = self.__rreplace(new_arg, ['"', ','])
                     v(new_arg)
                     return

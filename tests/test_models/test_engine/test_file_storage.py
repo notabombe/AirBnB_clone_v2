@@ -98,7 +98,7 @@ class TestBmFsInstances(unittest.TestCase):
         for k in all_obj.keys():
             if bm_id in k:
                 actual = 1
-        self.assertTrue(1 == actual)
+        self.assertTrue(actual == 1)
 
     def test_obj_saved_to_file(self):
         """... checks proper FileStorage instantiation"""
@@ -111,7 +111,7 @@ class TestBmFsInstances(unittest.TestCase):
         for k in storage_dict.keys():
             if bm_id in k:
                 actual = 1
-        self.assertTrue(1 == actual)
+        self.assertTrue(actual == 1)
 
     def test_to_json(self):
         """... to_json should return serializable dict object"""
@@ -121,7 +121,7 @@ class TestBmFsInstances(unittest.TestCase):
             serialized = json.dumps(my_model_json)
         except:
             actual = 0
-        self.assertTrue(1 == actual)
+        self.assertTrue(actual == 1)
 
     def test_reload(self):
         """... checks proper usage of reload function"""
@@ -135,7 +135,7 @@ class TestBmFsInstances(unittest.TestCase):
         for k in all_obj.keys():
             if bm_id in k:
                 actual = 1
-        self.assertTrue(1 == actual)
+        self.assertTrue(actual == 1)
 
     def test_save_reload_class(self):
         """... checks proper usage of class attribute in file storage"""
@@ -150,7 +150,7 @@ class TestBmFsInstances(unittest.TestCase):
             if bm_id in k:
                 if type(v).__name__ == 'BaseModel':
                     actual = 1
-        self.assertTrue(1 == actual)
+        self.assertTrue(actual == 1)
 
 
 class TestUserFsInstances(unittest.TestCase):
@@ -182,7 +182,7 @@ class TestUserFsInstances(unittest.TestCase):
         for k in all_obj.keys():
             if u_id in k:
                 actual = 1
-        self.assertTrue(1 == actual)
+        self.assertTrue(actual == 1)
 
     def test_obj_saved_to_file(self):
         """... checks proper FileStorage instantiation"""
@@ -195,7 +195,7 @@ class TestUserFsInstances(unittest.TestCase):
         for k in storage_dict.keys():
             if u_id in k:
                 actual = 1
-        self.assertTrue(1 == actual)
+        self.assertTrue(actual == 1)
 
     def test_reload(self):
         """... checks proper usage of reload function"""
@@ -209,7 +209,7 @@ class TestUserFsInstances(unittest.TestCase):
         for k in all_obj.keys():
             if u_id in k:
                 actual = 1
-        self.assertTrue(1 == actual)
+        self.assertTrue(actual == 1)
 
 
 if __name__ == '__main__':

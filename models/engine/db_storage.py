@@ -40,8 +40,9 @@ class DBStorage:
 
     def __init__(self):
         """instantiation of mysql DB as python object"""
-        self.__engine = create_engine('mysql+mysqldb://{}:{}@{}:3306/{}'
-                                      .format(hbuser, hbpw, hbhost, hbdb))
+        self.__engine = create_engine(
+            f'mysql+mysqldb://{hbuser}:{hbpw}@{hbhost}:3306/{hbdb}'
+        )
         if environ.get('HBNB_ENV') == 'test':
             Base.metadata.drop_all(self.__engine)
 
@@ -51,13 +52,13 @@ class DBStorage:
         if cls:
             a_query = self.__session.query(DBStorage.CNC[cls])
             for obj in a_query:
-                obj_ref = "{}.{}".format(type(obj).__name__, obj.id)
+                obj_ref = f"{type(obj).__name__}.{obj.id}"
                 d[obj_ref] = obj
             return d
         for c in DBStorage.CNC.values():
             a_query = self.__session.query(c)
             for obj in a_query:
-                obj_ref = "{}.{}".format(type(obj).__name__, obj.id)
+                obj_ref = f"{type(obj).__name__}.{obj.id}"
                 d[obj_ref] = obj
         return d
 
@@ -89,8 +90,8 @@ class DBStorage:
         """deletes all stored objects, for testing purposes"""
         for c in DBStorage.CNC.values():
             a_query = self.__session.query(c)
-            all_objs = [obj for obj in a_query]
-            for obj in range(len(all_objs)):
+            all_objs = list(a_query)
+            for _ in range(len(all_objs)):
                 to_delete = all_objs.pop(0)
                 to_delete.delete()
         self.save()

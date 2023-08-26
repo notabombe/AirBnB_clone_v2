@@ -71,20 +71,20 @@ def exec_command(my_console, the_command, last_lines=1):
 """
  Tests
 """
+
 result = exec_command(my_console, "create Place")
 if result is None or result == "":
     print("FAIL: No ID retrieved")
 
 model_id = result
 
-result = exec_command(my_console, "show Review {}".format(model_id))
+result = exec_command(my_console, f"show Review {model_id}")
 if result is None or result == "":
     print("FAIL: no output")
 
 search_str = "** no instance found **"
 if result != search_str:
-    print("FAIL: wrong output \"{}\" instead of \"{}\"".format(result,
-                                                               search_str))
+    print(f'FAIL: wrong output \"{result}\" instead of \"{search_str}\"')
 
 print("OK", end="")
 

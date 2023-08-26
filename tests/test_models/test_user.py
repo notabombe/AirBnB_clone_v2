@@ -62,11 +62,8 @@ class TestUserInstances(unittest.TestCase):
         """... checks if BaseModel is properly casted to string"""
         my_str = str(self.user)
         my_list = ['User', 'id', 'created_at']
-        actual = 0
-        for sub_str in my_list:
-            if sub_str in my_str:
-                actual += 1
-        self.assertTrue(3 == actual)
+        actual = sum(1 for sub_str in my_list if sub_str in my_str)
+        self.assertTrue(actual == 3)
 
     def test_instantiation_no_updated(self):
         """... should not have updated attribute"""
@@ -75,7 +72,7 @@ class TestUserInstances(unittest.TestCase):
         actual = 0
         if 'updated_at' in my_str:
             actual += 1
-        self.assertTrue(0 == actual)
+        self.assertTrue(actual == 0)
 
     def test_updated_at(self):
         """... save function should add updated_at attribute"""
@@ -92,24 +89,19 @@ class TestUserInstances(unittest.TestCase):
             serialized = json.dumps(self.user_json)
         except:
             actual = 0
-        self.assertTrue(1 == actual)
+        self.assertTrue(actual == 1)
 
     def test_json_class(self):
         """... to_json should include class key with value User"""
         self.user_json = self.user.to_json()
-        actual = None
-        if self.user_json['__class__']:
-            actual = self.user_json['__class__']
+        actual = self.user_json['__class__'] if self.user_json['__class__'] else None
         expected = 'User'
         self.assertEqual(expected, actual)
 
     def test_email_attribute(self):
         """... add email attribute"""
         self.user.email = "bettyholbertn@gmail.com"
-        if hasattr(self.user, 'email'):
-            actual = self.user.email
-        else:
-            actual = ''
+        actual = self.user.email if hasattr(self.user, 'email') else ''
         expected = "bettyholbertn@gmail.com"
         self.assertEqual(expected, actual)
 

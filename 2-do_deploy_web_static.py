@@ -15,17 +15,14 @@ def do_deploy(archive_path):
     ws = "web_static"
     try:
         filename = archive_path.split('/')[1]
-        put("versions/{}".format(filename), "/tmp/{}".format(filename))
-        run("mkdir -p /data/{}/{}".format(ws_rs, filename[:-4]))
-        run("tar -xzf /tmp/{} -C /data/{}/{}/"
-            .format(filename, ws_rs, filename[:-4]))
-        run("rm /tmp/{}".format(filename))
-        run("mv /data/{}/{}/{}/* /data/{}/{}"
-            .format(ws_rs, filename[:-4], ws, ws_rs, filename[:-4]))
-        run("rm -rf /data/{}/{}/{}".format(ws_rs, filename[:-4], ws))
+        put(f"versions/{filename}", f"/tmp/{filename}")
+        run(f"mkdir -p /data/{ws_rs}/{filename[:-4]}")
+        run(f"tar -xzf /tmp/{filename} -C /data/{ws_rs}/{filename[:-4]}/")
+        run(f"rm /tmp/{filename}")
+        run(f"mv /data/{ws_rs}/{filename[:-4]}/{ws}/* /data/{ws_rs}/{filename[:-4]}")
+        run(f"rm -rf /data/{ws_rs}/{filename[:-4]}/{ws}")
         run("rm -rf /data/web_static/current")
-        run("ln -s /data/{}/{} /data/{}/current"
-            .format(ws_rs, filename[:-4], ws))
+        run(f"ln -s /data/{ws_rs}/{filename[:-4]} /data/{ws}/current")
     except:
         return False
     return True
